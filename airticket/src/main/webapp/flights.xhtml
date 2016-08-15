@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Facelet Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+</h:head>
+<h:body>
+    <h:form prependId="false">
+        <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+        <p:growl id="growl" showDetail="true" life="2000"/>
+
+        <p:panelGrid columns="2">
+            <f:facet name="header">
+                #{i18n['flight.formLabel']}
+            </f:facet>
+
+            <p:outputLabel for="flightNumber" value="#{i18n['flight.flightNumber']}: "/>
+            <p:inputText id="flightNumber" value="#{flights.flight.flightNumber}"
+                         label="#{i18n['flight.flightNumber']}" size="32"/>
+
+            <p:outputLabel for="fromAirport" value="#{i18n['flight.fromAirport']}: "/>
+            <p:inputText id="fromAirport" value="#{flights.flight.fromAirport}"
+                         label="#{i18n['flight.fromAirport']}" size="32"/>
+
+            <p:outputLabel for="toAirport" value="#{i18n['flight.toAirport']}: "/>
+            <p:inputText id="toAirport" value="#{flights.flight.toAirport}"
+                         label="#{i18n['flight.toAirport']}" size="32"/>
+
+            <p:outputLabel for="departureDate" value="#{i18n['flight.departureDate']}: "/>
+            <p:calendar id="departureDate" value="#{flights.flight.departureDate}"
+                        pattern="yyyy-MMM-dd hh:mm a Z" size="32">
+                <f:converter converterId="zonedDateTimeConverter"/>
+            </p:calendar>
+
+            <p:outputLabel for="arrivalDate" value="#{i18n['flight.arrivalDate']}: "/>
+            <p:calendar id="arrivalDate" value="#{flights.flight.arrivalDate}"
+                        pattern="yyyy-MMM-dd hh:mm a Z" size="32">
+                <f:converter converterId="zonedDateTimeConverter"/>
+            </p:calendar>
+        </p:panelGrid>
+
+        <p:commandButton value="Save" action="#{flights.save}" update="messages, growl, tbl"/>
+
+
+        <!--<p:dataList id="reminders" value="#{flights.flights}" var="object" type="ordered">-->
+            <!--<f:facet name="header">-->
+                <!--#{i18n['flights.listHeader']}-->
+            <!--</f:facet>-->
+            <!--#{object.flightNumber}-->
+            <!--#{object.flightStatus}-->
+            <!--#{object.departureDate}-->
+            <!--#{object.fromAirport} -> #{object.toAirport}-->
+            <!--#{object.arrivalDate}-->
+        <!--</p:dataList>-->
+
+        <p:dataTable id="tbl" value="#{flights.flights}" var="object" type="ordered"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                     paginator="true" rows="10" style="margin-bottom:20px">
+
+            <f:facet name="{Exporters}">
+                <h:commandLink>
+                    <p:graphicImage name="/images/excel.png" width="24"/>
+                    <p:dataExporter type="xls" target="tbl" fileName="flights" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/images/pdf.png" width="24"/>
+                    <p:dataExporter type="pdf" target="tbl" fileName="flights"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/images/csv.png" width="24"/>
+                    <p:dataExporter type="csv" target="tbl" fileName="flights" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage name="/images/xml.png" width="24"/>
+                    <p:dataExporter type="xml" target="tbl" fileName="flights" />
+                </h:commandLink>
+            </f:facet>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.flightNumber']}" />
+                </f:facet>
+                <h:outputText value="#{object.flightNumber}" />
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.flightStatus']}" />
+                </f:facet>
+                <h:outputText value="#{object.flightStatus}" />
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.departureDate']}" />
+                </f:facet>
+                <h:outputText pattern="yyyy-MM-dd hh:mm z" value="#{object.departureDate}" >
+                    <f:converter converterId="zonedDateTimeConverter"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.fromAirport']}" />
+                </f:facet>
+                <h:outputText value="#{object.fromAirport}" />
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.toAirport']}" />
+                </f:facet>
+                <h:outputText value="#{object.toAirport}" />
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">
+                    <h:outputText value="#{i18n['flight.arrivalDate']}" />
+                </f:facet>
+                <h:outputText pattern="yyyy-MM-dd hh:mm z" value="#{object.arrivalDate}" >
+                    <f:converter converterId="zonedDateTimeConverter"/>
+                </h:outputText>
+            </p:column>
+
+        </p:dataTable>
+
+        <h3>Export Page Data Only</h3>
+        <h:commandLink>
+            <p:graphicImage name="/images/excel.png" />
+            <p:dataExporter type="xls" target="tbl" fileName="flights" pageOnly="true"/>
+        </h:commandLink>
+
+        <h:commandLink>
+            <p:graphicImage name="/images/pdf.png" />
+            <p:dataExporter type="pdf" target="tbl" fileName="flights" pageOnly="true" />
+        </h:commandLink>
+
+        <h:commandLink>
+            <p:graphicImage name="/images/csv.png" />
+            <p:dataExporter type="csv" target="tbl" fileName="flights" pageOnly="true" />
+        </h:commandLink>
+
+        <h:commandLink>
+            <p:graphicImage name="/images/xml.png" />
+            <p:dataExporter type="xml" target="tbl" fileName="flights" pageOnly="true" />
+        </h:commandLink>
+
+    </h:form>
+</h:body>
+</html>
